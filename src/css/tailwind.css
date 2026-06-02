@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@plugin "@iconify/tailwind4";
+/* we need to tell Tailwind which dynamic classes to keep otherwise they won't be available at runtime */
+@source "./safelist.txt";
 
 
 @theme {
