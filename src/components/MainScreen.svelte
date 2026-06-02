@@ -1,0 +1,34 @@
+<script lang="ts">
+  import type { ViewState } from "../ts/ui/state/ViewState.svelte"
+  import type { MeiliService } from "../ts/service/MeiliService"
+  import Header from "./mainMenu/Header.svelte"
+
+  let { viewState }: { viewState: ViewState } = $props()
+
+  let meili = $derived(viewState.meili)
+
+
+  $effect(() => {
+    if (meili) {
+      updateBasicData(meili).then(() => { })
+    }
+  })
+
+  async function updateBasicData(meili: MeiliService) {
+    // TODO: check if there are more pages but should in most cases be fine
+    viewState.indices = (await meili.client.getIndexes()).results
+
+    viewState.isHealthy = await meili.client.isHealthy()
+    viewState.meiliVersion = (await meili.client.getVersion()).pkgVersion
+    viewState.stats = await meili.client.getStats()
+  }
+</script>
+
+
+<div class="w-full h-dvh flex flex-col">
+  <Header {viewState} />
+
+  <main class="w-full h-dvh flex flex-col items-center justify-center">
+    Meilisearch
+  </main>
+</div>

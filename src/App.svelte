@@ -1,7 +1,9 @@
 <script>
+    import MainScreen from "./components/MainScreen.svelte"
+    import {ViewState} from "./ts/ui/state/ViewState.svelte"
+
+    const viewState = ViewState.state
 
 </script>
 
-<main class="w-full h-dvh flex flex-col items-center justify-center">
-  Meilisearch UI
-</main>
+<MainScreen {viewState} />
