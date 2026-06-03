@@ -6,6 +6,7 @@
   import type { Hit } from "meilisearch"
   import SearchResultDetail from "./searchresults/SearchResultDetail.svelte"
   import { Constants } from "../ts/service/Constants"
+  import Dialog from "./dialog/Dialog.svelte"
 
   let { viewState }: { viewState: ViewState } = $props()
 
@@ -45,6 +46,9 @@
 
     {#if viewState.selectedHit}
       {#if Constants.isSmallScreen}
+        <Dialog open={viewState.selectedHit !== undefined} showTitleBar={false} onClose={() => (viewState.selectedHit = undefined)}>
+          <SearchResultDetail hit={viewState.selectedHit} {viewState} />
+        </Dialog>
       {:else}
         <div class="flex-1">
           <SearchResultDetail hit={viewState.selectedHit} {viewState} />
