@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ViewState } from "../../ts/ui/state/ViewState.svelte"
   import type { MeiliService } from "../../ts/service/MeiliService.ts"
-  import type { Index, MatchingStrategies } from "meilisearch"
+  import type { Hit, Index, MatchingStrategies, RecordAny } from "meilisearch"
   import SearchResultCard from "./SearchResultCard.svelte"
 
   let { viewState }: { viewState: ViewState } = $props()
@@ -10,7 +10,15 @@
 
   let search = $derived(viewState.search)
 
-  let hits = $derived(search.searchResponse?.hits ?? [])
+  let response = $derived(search.searchResponse)
+
+  const totalHits = $derived(response?.totalHits ?? response?.estimatedTotalHits ?? response?.hits?.length ?? 0)
+
+  const isEstimated = $derived(response && !("totalHits" in response) && "estimatedTotalHits" in response)
+
+  const hasFacets = $derived(response?.facetDistribution && Object.keys(response.facetDistribution).length > 0)
+
+  let loading = $state(false)
 
 
   $effect(() => {
@@ -20,30 +28,146 @@
   async function doSearch(meili: MeiliService | undefined, index: Index | undefined, query: string, matchingStrategy: MatchingStrategies) {
     search.page = 0
 
-    search.searchResponse = undefined
+    response = undefined
+    loading = true
 
     if (meili && index) {
-      search.searchResponse = await meili.search(index.uid, search)
+      response = await meili.search(index.uid, search)
+      loading = false
     }
+  }
+
+  function itemSelected(hit: Hit) {
+    //onSelect?.(hit)
+  }
+
+  function formatMs(ms: number): string {
+    return ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(2)} s`
   }
 </script>
 
+<section class="flex h-full flex-col font-sans overflow-y-auto px-2 py-1.5">
 
-<div class="w-full h-full max-w-250 min-h-0 mx-auto flex flex-col gap-2 overflow-y-auto">
-  <div class="mt-3 mb-1.5 flex flex-row gap-2">
-    {#if search.searchResponse?.processingTimeMs}
-      <span class="">Processing time: </span>
-      <span class="">{search.searchResponse.processingTimeMs} ms</span>
-    {/if}
-    {#if search.searchResponse?.estimatedTotalHits}
-      <span class="">Total hits: ~</span>
-      <span class="">{search.searchResponse.estimatedTotalHits}</span>
+  <!-- ── Meta bar ─────────────────────────────────────────────────────────── -->
+  <div class="flex items-center justify-between border-b border-zinc-100 mb-2">
+    {#if loading}
+      <div class="flex items-center gap-2 text-sm text-zinc-400">
+        <!-- Spinner -->
+        <svg class="h-4 w-4 animate-spin text-primary" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4 31.4"
+                  stroke-linecap="round" />
+        </svg>
+        Searching…
+      </div>
+    {:else if response}
+      <div class="text-sm text-zinc-500">
+        {#if response.query}
+          Results for <span class="font-semibold text-zinc-800">"{response.query}"</span> —
+        {/if}
+        <span class="font-semibold text-zinc-800">{totalHits.toLocaleString()}</span>
+        {isEstimated ? '~' : ''} hit{totalHits !== 1 ? 's' : ''}
+      </div>
+      <div class="flex items-center gap-1 rounded-full bg-zinc-50 px-2.5 py-1
+                   text-[11px] font-medium text-zinc-400 ring-1 ring-zinc-200">
+        <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        {formatMs(response.processingTimeMs)}
+      </div>
+    {:else}
+      <p class="text-sm text-zinc-400">No results yet</p>
     {/if}
   </div>
 
-  <div class="shrink-0 w-full min-h-0 flex flex-col gap-2.5">
-    {#each hits as hit}
-      <SearchResultCard {hit} />
-    {/each}
+  <!-- ── Facet chips (optional, shown when facets present) ────────────────── -->
+  {#if hasFacets && response?.facetDistribution}
+    <div class="mb-3 flex flex-wrap gap-2">
+      {#each Object.entries(response.facetDistribution) as [facet, values]}
+        {#each Object.entries(values).slice(0, 4) as [val, count]}
+          <span
+              class="inline-flex items-center gap-1 rounded-full border border-zinc-200
+                   bg-white px-2.5 py-0.5 text-[11px] text-zinc-600"
+          >
+            <span class="font-medium text-zinc-400 capitalize">{facet}:</span>
+            {val}
+            <span class="rounded-full bg-zinc-100 px-1.5 text-[10px] font-semibold text-zinc-500">
+              {count}
+            </span>
+          </span>
+        {/each}
+      {/each}
+    </div>
+  {/if}
+
+  <!-- ── Hit list ──────────────────────────────────────────────────────────── -->
+  <div class="flex-1 [scrollbar-color:theme(colors.zinc.300)_transparent]">
+    {#if loading}
+      <!-- Skeleton cards -->
+      <ul class="space-y-3">
+        {#each Array(4) as _}
+          <li class="flex gap-4 rounded-2xl border border-zinc-100 bg-white p-4">
+            <div class="h-16 w-16 shrink-0 animate-pulse rounded-xl bg-zinc-100"></div>
+            <div class="flex-1 space-y-2 py-1">
+              <div class="h-3 w-2/3 animate-pulse rounded bg-zinc-100"></div>
+              <div class="h-2.5 w-1/2 animate-pulse rounded bg-zinc-100"></div>
+              <div class="h-2.5 w-3/4 animate-pulse rounded bg-zinc-100"></div>
+            </div>
+          </li>
+        {/each}
+      </ul>
+
+    {:else if response && response.hits.length > 0}
+      <ul class="space-y-3">
+        {#each response.hits as hit, i}
+          <li
+              class="cursor-pointer"
+              style="animation-delay: {i * 30}ms"
+              onclick={() => itemSelected(hit)}
+              onkeydown={e => e.key === "Enter" && itemSelected(hit)}
+              role="button"
+              tabindex="0"
+          >
+            <SearchResultCard {hit} query={response.query} />
+          </li>
+        {/each}
+      </ul>
+
+      <!-- Pagination hint -->
+      {#if response.totalPages && response.totalPages > 1}
+        <p class="mt-4 text-center text-xs text-zinc-400">
+          Page {response.page ?? 1} of {response.totalPages}
+        </p>
+      {/if}
+
+    {:else if response && response.hits.length === 0}
+      <!-- Empty state -->
+      <div class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-50 ring-1 ring-zinc-200">
+          <svg class="h-7 w-7 text-zinc-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </div>
+        <p class="text-sm font-semibold text-zinc-700">No results found</p>
+        {#if response.query}
+          <p class="mt-1 text-xs text-zinc-400">
+            Nothing matched "<span class="font-medium">{response.query}</span>" — try different keywords.
+          </p>
+        {/if}
+      </div>
+
+    {:else}
+      <!-- Idle state -->
+      <div class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-50 ring-1 ring-zinc-200">
+          <svg class="h-7 w-7 text-zinc-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </div>
+        <p class="text-sm font-semibold text-zinc-700">Start searching</p>
+        <p class="mt-1 text-xs text-zinc-400">Results will appear here.</p>
+      </div>
+    {/if}
   </div>
-</div>
+</section>
