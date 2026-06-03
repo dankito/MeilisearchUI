@@ -1,9 +1,13 @@
 <script lang="ts">
   import type { ViewState } from "../../ts/ui/state/ViewState.svelte"
+  import ComboBox from "../common/form/ComboBox.svelte"
+  import { Option } from "../../ts/ui/Option"
 
   let { viewState }: { viewState: ViewState } = $props()
 
   let indices = $derived(viewState.indices ?? [])
+
+  let indexOptions = $derived(indices.map(index => new Option(index, index.uid)))
 </script>
 
 
@@ -17,14 +21,11 @@
   </div>
 
   <div class="flex flex-row items-center gap-2">
-    {#each indices as index (index.uid)}
-      <div class="flex items-center">
-        <span class="">{index.uid}</span>
-      </div>
-    {/each}
+    <ComboBox class="h-9" options={indexOptions} selectedOption={viewState.selectedIndex}
+              selectionChanged={index => viewState.selectedIndex = index} />
   </div>
 
   <div class="">
-    Right
+    <!-- Right -->
   </div>
 </div>

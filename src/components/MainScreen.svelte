@@ -17,6 +17,7 @@
   async function updateBasicData(meili: MeiliService) {
     // TODO: check if there are more pages but should in most cases be fine
     viewState.indices = (await meili.client.getIndexes()).results
+    viewState.selectedIndex = viewState.indices.length ? viewState.indices[0] : undefined
 
     viewState.isHealthy = await meili.client.isHealthy()
     viewState.meiliVersion = (await meili.client.getVersion()).pkgVersion

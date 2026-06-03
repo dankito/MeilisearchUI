@@ -12,8 +12,11 @@ export class ViewState {
 
   isHealthy = $state<boolean | undefined>(undefined)
 
+  stats = $state<Stats | undefined>(undefined)
+
+
   indices = $state<Index[] | undefined>(undefined)
 
-  stats = $state<Stats | undefined>(undefined)
+  selectedIndex = $state<Index | undefined>(undefined)
 
 }
