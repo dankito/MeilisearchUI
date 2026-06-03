@@ -73,14 +73,14 @@
         {#if val}
           <div class="flex gap-1.5 text-xs leading-relaxed">
             <dt class="shrink-0 font-medium text-zinc-400 capitalize">{key.replace(/_/g, ' ')}</dt>
-            <dd class="min-w-0 text-zinc-600 line-clamp-1 break-all">
+            <dd class="min-w-0 text-zinc-600 truncate break-all">
               {#if presenter.isUrl(raw)}
                 <a href={raw} target="_blank" rel="noopener"
                    class="text-primary underline underline-offset-2 hover:text-primary/80">
-                  {presenter.truncate(raw, 50)}
+                  {raw}
                 </a>
               {:else}
-                {presenter.truncate(val, 120)}
+                {val}
               {/if}
             </dd>
           </div>

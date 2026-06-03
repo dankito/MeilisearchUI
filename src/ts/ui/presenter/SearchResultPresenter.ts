@@ -64,13 +64,13 @@ export class SearchResultPresenter {
 
   getTitle(hit: Hit, titleKey: string | null): string {
     if (titleKey) {
-      return this.truncate(String(hit[titleKey]), 80)
+      return String(hit[titleKey])
     }
 
     // Fallback: first short string value
-    for (const [, v] of Object.entries(hit)) {
-      if (typeof v === "string" && v.length < 120 && !this.isImageUrl(v) && !this.isUrl(v)) {
-        return this.truncate(v, 80)
+    for (const [, value] of Object.entries(hit)) {
+      if (typeof value === "string" && value.length < 120 && !this.isImageUrl(value) && !this.isUrl(value)) {
+        return value
       }
     }
 
@@ -121,10 +121,6 @@ export class SearchResultPresenter {
       return JSON.stringify(val)
     }
     return String(val)
-  }
-
-  truncate(str: string, max: number): string {
-    return str.length > max ? str.slice(0, max).trimEnd() + "…" : str
   }
 
 }
