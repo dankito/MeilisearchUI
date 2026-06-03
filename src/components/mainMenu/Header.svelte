@@ -3,13 +3,16 @@
   import ComboBox from "../common/form/ComboBox.svelte"
   import { Option } from "../../ts/ui/Option"
   import SearchBar from "./SearchBar.svelte"
-  import type { Index } from "meilisearch"
+  import { type Index, MatchingStrategies } from "meilisearch"
 
   let { viewState }: { viewState: ViewState } = $props()
 
   let indices = $derived(viewState.indices ?? [])
 
   let indexOptions = $derived(indices.map(index => new Option<Index>(index, index.uid)))
+
+  let matchingStrategiesOptions = [ MatchingStrategies.LAST, MatchingStrategies.ALL, MatchingStrategies.FREQUENCY ]
+    .map(strategy => new Option(strategy, strategy.substring(0, 1).toUpperCase() + strategy.substring(1)))
 </script>
 
 
@@ -27,6 +30,8 @@
               selectionChanged={index => viewState.selectedIndex = index} />
 
     <SearchBar {viewState} />
+
+    <ComboBox class="shrink-0 h-10 min-w-[65px] max-sm:max-w-[93px]" options={matchingStrategiesOptions} bind:selectedOption={viewState.search.matchingStrategy} />
   </div>
 
   <div class="">
