@@ -25,8 +25,8 @@
 </script>
 
 <article class="relative flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white
-         px-3 py-3 shadow-sm transition-all duration-200
-         hover:shadow-md hover:-translate-y-px">
+         px-3 py-3 shadow-lg transition-all duration-200
+         hover:shadow-xl hover:-translate-y-px">
   <!-- Image thumbnail -->
   {#if hasImageUrls}
     {#if imageUrl && !imgError}

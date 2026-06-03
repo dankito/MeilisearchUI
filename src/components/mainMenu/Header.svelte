@@ -16,7 +16,7 @@
 </script>
 
 
-<div class="shrink-0 w-full h-16 sticky top-0 z-50 shadow-md bg-white px-1.5 md:px-4 py-1.5 md:py-2 flex flex-row items-center justify-between overflow-hidden">
+<div class="shrink-0 w-full h-16 sticky top-0 z-50 shadow-lg bg-white px-1.5 md:px-4 py-1.5 md:py-2 flex flex-row items-center justify-between overflow-hidden">
   <div class="flex flex-col md:flex-row items-center gap-1 md:gap-2">
     <div class="rounded-full size-5" class:bg-green-600={viewState.isHealthy} class:bg-red-600={!!!viewState.isHealthy}></div>
 
