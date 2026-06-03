@@ -10,9 +10,13 @@ export class SearchResultPresenter {
     "updatedAt", "password", "hash", "__v", "_rankingScore",
   ])
 
+  static ID_KEYS = [
+    "id", "_id", "uuid",
+  ]
+
   /** Priority keys shown first if present */
   static PRIORITY_KEYS = [
-    "id", "_id", "uuid", "title", "name", "label", "headline", "subject",
+    "title", "name", "label", "headline", "subject",
     "description", "summary", "excerpt", "body", "content",
     "author", "category", "type", "status", "tags",
     "price", "rating", "date", "year",
@@ -66,16 +70,24 @@ export class SearchResultPresenter {
   determineBodyFields(hit: Hit, titleKey: string | null): string[] {
     const allKeys = Object.keys(hit).filter(k => !SearchResultPresenter.BORING_KEYS.has(k) && k !== titleKey && !this.isImageUrl(hit[k]))
 
+    const idKey = allKeys.find(k => SearchResultPresenter.ID_KEYS.includes(k))
+
     const prioritised = SearchResultPresenter.PRIORITY_KEYS
       .filter(k => allKeys.includes(k))
       .concat(allKeys.filter(k => !SearchResultPresenter.PRIORITY_KEYS.includes(k)))
 
-    return prioritised
+    let idAndPrioritised = prioritised
       .filter(k => {
         const v = hit[k]
         return v !== null && v !== undefined && String(v).trim() !== ""
       })
-      .slice(0, 4)
+      .slice(0, idKey ? 3 : 4)
+
+    if (idKey) {
+      idAndPrioritised = [ idKey, ...idAndPrioritised ]
+    }
+
+    return idAndPrioritised
   }
 
   determineRankingScore(hit: Hit): number | null {
