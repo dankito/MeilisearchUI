@@ -86,7 +86,7 @@
               class="inline-flex items-center gap-1 rounded-full border border-zinc-200
                    bg-white px-2.5 py-0.5 text-[11px] text-zinc-600"
           >
-            <span class="font-medium text-zinc-400 capitalize">{facet}:</span>
+            <span class="font-medium text-zinc-400">{facet}:</span>
             {val}
             <span class="rounded-full bg-zinc-100 px-1.5 text-[10px] font-semibold text-zinc-500">
               {count}
