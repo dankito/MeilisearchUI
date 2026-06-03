@@ -12,11 +12,11 @@
 
   let response = $derived(search.searchResponse)
 
-  const totalHits = $derived(response?.totalHits ?? response?.estimatedTotalHits ?? response?.hits?.length ?? 0)
+  let totalHits = $derived(response?.totalHits ?? response?.estimatedTotalHits ?? response?.hits?.length ?? 0)
 
-  const isEstimated = $derived(response && !("totalHits" in response) && "estimatedTotalHits" in response)
+  let isEstimated = $derived(response && !("totalHits" in response) && "estimatedTotalHits" in response)
 
-  const hasFacets = $derived(response?.facetDistribution && Object.keys(response.facetDistribution).length > 0)
+  let hasFacets = $derived(response?.facetDistribution && Object.keys(response.facetDistribution).length > 0)
 
   let loading = $state(false)
 
@@ -46,20 +46,11 @@
   }
 </script>
 
-<section class="flex h-full flex-col font-sans overflow-y-auto px-2 py-1.5">
+<section class="flex h-full min-h-0 flex-col font-sans overflow-y-auto px-2 py-1.5">
 
   <!-- ── Meta bar ─────────────────────────────────────────────────────────── -->
   <div class="flex items-center justify-between border-b border-zinc-100 mb-2">
-    {#if loading}
-      <div class="flex items-center gap-2 text-sm text-zinc-400">
-        <!-- Spinner -->
-        <svg class="h-4 w-4 animate-spin text-primary" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4 31.4"
-                  stroke-linecap="round" />
-        </svg>
-        Searching…
-      </div>
-    {:else if response}
+    {#if response}
       <div class="text-sm text-zinc-500">
         {#if response.query}
           Results for <span class="font-semibold text-zinc-800">"{response.query}"</span> —
@@ -103,18 +94,29 @@
   <div class="flex-1 [scrollbar-color:theme(colors.zinc.300)_transparent]">
     {#if loading}
       <!-- Skeleton cards -->
-      <ul class="space-y-3">
-        {#each Array(4) as _}
-          <li class="flex gap-4 rounded-2xl border border-zinc-100 bg-white p-4">
-            <div class="h-16 w-16 shrink-0 animate-pulse rounded-xl bg-zinc-100"></div>
-            <div class="flex-1 space-y-2 py-1">
-              <div class="h-3 w-2/3 animate-pulse rounded bg-zinc-100"></div>
-              <div class="h-2.5 w-1/2 animate-pulse rounded bg-zinc-100"></div>
-              <div class="h-2.5 w-3/4 animate-pulse rounded bg-zinc-100"></div>
-            </div>
-          </li>
-        {/each}
-      </ul>
+      <div class="h-full w-full flex flex-col items-center justify-center gap-4">
+        <div class="flex items-center gap-2 text-sm text-zinc-400 mb-5">
+          <!-- Spinner -->
+          <svg class="h-4 w-4 animate-spin text-primary" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4 31.4"
+                    stroke-linecap="round" />
+          </svg>
+          Searching…
+        </div>
+
+        <ul class="space-y-3">
+          {#each Array(4) as _}
+            <li class="w-80 h-36 flex gap-4 rounded-2xl border border-zinc-100 bg-white p-4">
+              <div class="size-28 shrink-0 animate-pulse rounded-xl bg-zinc-100"></div>
+              <div class="flex-1 space-y-6 py-1">
+                <div class="h-3 w-2/3 animate-pulse rounded bg-zinc-100"></div>
+                <div class="h-2.5 w-1/2 animate-pulse rounded bg-zinc-100"></div>
+                <div class="h-2.5 w-3/4 animate-pulse rounded bg-zinc-100"></div>
+              </div>
+            </li>
+          {/each}
+        </ul>
+      </div>
 
     {:else if response && response.hits.length > 0}
       <ul class="space-y-3">
@@ -127,7 +129,7 @@
               role="button"
               tabindex="0"
           >
-            <SearchResultCard {hit} query={response.query} />
+            <SearchResultCard {hit} />
           </li>
         {/each}
       </ul>

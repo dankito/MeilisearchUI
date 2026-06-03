@@ -1,12 +1,8 @@
 <script lang="ts">
-  type Hit = Record<string, any>
+  import { BookOpen } from "@lucide/svelte"
+  import type { Hit } from "meilisearch"
 
-  interface Props {
-    hit: Hit
-    query?: string
-  }
-
-  let { hit, query = "" }: Props = $props()
+  let { hit }: { hit: Hit } = $props()
 
   // ── Heuristics ────────────────────────────────────────────────────────────
 
@@ -127,32 +123,24 @@
   let imgError = $state(false)
 </script>
 
-<article class="group relative flex gap-4 rounded-2xl border border-zinc-200 bg-white
-         p-4 shadow-sm transition-all duration-200
+<article class="relative flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white
+         px-3 py-3 shadow-sm transition-all duration-200
          hover:shadow-md hover:-translate-y-px">
   <!-- Image thumbnail -->
   {#if imageUrl && !imgError}
-    <div class="shrink-0 h-full flex flex-col items-center justify-center">
-      <img
-          src={imageUrl}
-          alt={title}
-          onerror={() => (imgError = true)}
-          class="size-16 rounded-xl object-cover ring-1 ring-zinc-100"
-      />
-    </div>
+    <img
+        src={imageUrl}
+        alt={title}
+        onerror={() => (imgError = true)}
+        class="size-20 rounded-xl object-cover ring-1 ring-zinc-100"
+    />
   {:else}
     <!-- Placeholder icon -->
     <div
-        class="flex size-16 shrink-0 items-center justify-center
-             rounded-xl bg-zinc-50 ring-1 ring-zinc-100"
+        class="shrink-0 size-20 flex items-center justify-center
+             rounded-xl text-zinc-300 bg-zinc-50 ring-1 ring-zinc-100"
     >
-      <svg class="h-6 w-6 text-zinc-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path stroke-linecap="round" stroke-linejoin="round"
-              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0
-             0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5
-             3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504
-             1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-      </svg>
+      <BookOpen size={28} />
     </div>
   {/if}
 

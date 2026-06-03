@@ -32,7 +32,7 @@
 <div class="w-full h-dvh flex flex-col">
   <Header {viewState} />
 
-  <main class="flex-1 w-full h-full flex flex-col items-center justify-center">
+  <main class="flex-1 w-full h-full min-h-0 flex flex-col items-center justify-center">
     <SearchResultsList {viewState} />
   </main>
 </div>
