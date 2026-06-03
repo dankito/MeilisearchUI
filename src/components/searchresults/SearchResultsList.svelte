@@ -3,8 +3,11 @@
   import type { MeiliService } from "../../ts/service/MeiliService.ts"
   import type { Hit, Index, MatchingStrategies, RecordAny } from "meilisearch"
   import SearchResultCard from "./SearchResultCard.svelte"
+  import { DI } from "../../ts/service/DI"
 
   let { viewState }: { viewState: ViewState } = $props()
+
+  const presenter = DI.searchResultPresenter
 
   let meili = $derived(viewState.meili)
 
@@ -15,6 +18,8 @@
   let totalHits = $derived(response?.totalHits ?? response?.estimatedTotalHits ?? response?.hits?.length ?? 0)
 
   let isEstimated = $derived(response && !("totalHits" in response) && "estimatedTotalHits" in response)
+
+  let hasImageUrls = $derived(response?.hits.some(hit => presenter.findImageUrl(hit)) ?? false)
 
   let hasFacets = $derived(response?.facetDistribution && Object.keys(response.facetDistribution).length > 0)
 
@@ -129,7 +134,7 @@
               role="button"
               tabindex="0"
           >
-            <SearchResultCard {hit} />
+            <SearchResultCard {hit} {hasImageUrls} />
           </li>
         {/each}
       </ul>

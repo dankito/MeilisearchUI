@@ -4,7 +4,7 @@
   import { DI } from "../../ts/service/DI"
   import { SearchResultPresenter } from "../../ts/ui/presenter/SearchResultPresenter"
 
-  let { hit }: { hit: Hit } = $props()
+  let { hit, hasImageUrls = false }: { hit: Hit, hasImageUrls?: boolean } = $props()
 
   const presenter = DI.searchResultPresenter
 
@@ -29,21 +29,23 @@
          px-3 py-3 shadow-sm transition-all duration-200
          hover:shadow-md hover:-translate-y-px">
   <!-- Image thumbnail -->
-  {#if imageUrl && !imgError}
-    <img
-        src={imageUrl}
-        alt={title}
-        onerror={() => (imgError = true)}
-        class="size-20 rounded-xl object-cover ring-1 ring-zinc-100"
-    />
-  {:else}
-    <!-- Placeholder icon -->
-    <div
-        class="shrink-0 size-20 flex items-center justify-center
+  {#if hasImageUrls}
+    {#if imageUrl && !imgError}
+      <img
+          src={imageUrl}
+          alt={title}
+          onerror={() => (imgError = true)}
+          class="size-20 rounded-xl object-cover ring-1 ring-zinc-100"
+      />
+    {:else}
+      <!-- Placeholder icon -->
+      <div
+          class="shrink-0 size-20 flex items-center justify-center
              rounded-xl text-zinc-300 bg-zinc-50 ring-1 ring-zinc-100"
-    >
-      <BookOpen size={28} />
-    </div>
+      >
+        <BookOpen size={28} />
+      </div>
+    {/if}
   {/if}
 
   <!-- Content -->
