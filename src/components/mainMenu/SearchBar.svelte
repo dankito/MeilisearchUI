@@ -25,7 +25,7 @@
 
 
 <div class="flex items-center gap-1 md:gap-2
-    h-10 md:min-w-80 max-w-100 px-3 py-2
+    h-10 min-w-0 md:min-w-80 max-w-100 px-3 py-2
     rounded-2xl border border-zinc-200
     shadow-md shadow-zinc-300/80
     pointer-events-auto">
