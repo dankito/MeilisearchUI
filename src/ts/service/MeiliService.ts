@@ -1,4 +1,5 @@
-import { Meilisearch } from "meilisearch"
+import { Meilisearch, type MultiSearchParams, type MultiSearchQuery, type MultiSearchResponse, type SearchResponse } from "meilisearch"
+import { SearchState } from "../ui/state/SearchState.svelte"
 
 export class MeiliService {
 
@@ -7,4 +8,14 @@ export class MeiliService {
   constructor(host: string = "http://localhost:7700", apiKey?: string) {
     this.client = new Meilisearch({ host: host, apiKey: apiKey })
   }
+
+
+  async search(indexName: string, search: SearchState): Promise<SearchResponse> {
+    const searchQuery: MultiSearchQuery = { indexUid: indexName, q: search.query, limit: search.pageSize, offset: search.page, }
+    const params: MultiSearchParams = { queries: [ searchQuery ] }
+    const response: MultiSearchResponse = await this.client.multiSearch(params)
+
+    return response.results[0]
+  }
+
 }

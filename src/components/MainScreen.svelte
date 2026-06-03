@@ -2,6 +2,7 @@
   import type { ViewState } from "../ts/ui/state/ViewState.svelte"
   import type { MeiliService } from "../ts/service/MeiliService"
   import Header from "./mainMenu/Header.svelte"
+  import SearchResultsList from "./searchresults/SearchResultsList.svelte"
 
   let { viewState }: { viewState: ViewState } = $props()
 
@@ -22,6 +23,8 @@
     viewState.isHealthy = await meili.client.isHealthy()
     viewState.meiliVersion = (await meili.client.getVersion()).pkgVersion
     viewState.stats = await meili.client.getStats()
+
+    //viewState.keys = (await meili.client.getKeys()).results
   }
 </script>
 
@@ -30,6 +33,6 @@
   <Header {viewState} />
 
   <main class="w-full h-dvh flex flex-col items-center justify-center">
-    Meilisearch
+    <SearchResultsList {viewState} />
   </main>
 </div>
