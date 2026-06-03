@@ -48,8 +48,7 @@
 
   <!-- Input -->
   <input bind:this={searchInput} type="search" bind:value={search.query} placeholder="Search in {viewState.selectedIndex?.uid}"
-         class="flex-1 md:h-6 min-w-0 bg-transparent outline-none
-      text-zinc-700 placeholder:text-zinc-400 text-xs md:text-sm" />
+         class="flex-1 md:h-6 min-w-0 bg-transparent outline-none placeholder:text-zinc-400" />
 
   <!-- Clear button — only shown when there's a query -->
   {#if search.query}

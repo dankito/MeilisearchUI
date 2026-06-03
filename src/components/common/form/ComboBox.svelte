@@ -20,7 +20,7 @@
   {/if}
 
   <select id={label} value={selectedOption !== undefined ? String(selectedOption) : ""} onchange={selectedItemChanged}
-      class="flex-1 min-w-0 h-full px-2 py-1.5 truncate rounded-lg border border-zinc-300 text-zinc-700
+      class="flex-1 min-w-0 h-full px-2 py-1.5 truncate rounded-lg border border-zinc-300
            focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
   >
     {#each options as option}
