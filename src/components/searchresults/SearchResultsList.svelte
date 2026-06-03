@@ -27,6 +27,7 @@
 
 
   $effect(() => {
+    // do not remove the 'unused' parameters, they are a signal for reactive system to trigger search
     doSearch(meili, viewState.selectedIndex, search.query, search.matchingStrategy).then(() => { })
   })
 
@@ -158,7 +159,7 @@
         <p class="text-sm font-semibold text-zinc-700">No results found</p>
         {#if response.query}
           <p class="mt-1 text-xs text-zinc-400">
-            Nothing matched "<span class="font-medium">{response.query}</span>" — try different keywords.
+            Nothing matched "<span class="font-medium">{response.query}</span>"
           </p>
         {/if}
       </div>
@@ -166,8 +167,8 @@
     {:else}
       <!-- Idle state -->
       <div class="flex flex-col items-center justify-center py-20 text-center">
-        <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-50 ring-1 ring-zinc-200">
-          <svg class="h-7 w-7 text-zinc-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <div class="mb-4 flex size-16 items-center justify-center rounded-2xl bg-zinc-50 ring-1 ring-zinc-200">
+          <svg class="size-7 text-zinc-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round"
                   d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
@@ -177,4 +178,5 @@
       </div>
     {/if}
   </div>
+
 </section>
