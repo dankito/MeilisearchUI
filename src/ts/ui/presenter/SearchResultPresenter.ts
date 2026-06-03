@@ -84,7 +84,7 @@ export class SearchResultPresenter {
 
     const prioritised = SearchResultPresenter.PriorityKeys
       .filter(k => allKeys.includes(k))
-      .concat(allKeys.filter(k => !SearchResultPresenter.PriorityKeys.includes(k)))
+      .concat(allKeys.filter(k => k !== idKey && !SearchResultPresenter.PriorityKeys.includes(k)))
 
     let idAndPrioritised = prioritised
       .filter(k => {
