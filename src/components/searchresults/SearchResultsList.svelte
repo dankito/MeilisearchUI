@@ -51,7 +51,7 @@
   }
 </script>
 
-<section class="flex h-full min-h-0 flex-col font-sans overflow-y-auto px-2 py-1.5">
+<section class="flex w-full h-full min-h-0 max-w-200 mx-auto flex-col font-sans overflow-x-hidden overflow-y-auto px-2 py-1.5">
 
   <!-- ── Meta bar ─────────────────────────────────────────────────────────── -->
   <div class="flex items-center justify-between border-b border-zinc-100 mb-2">
@@ -96,7 +96,7 @@
   {/if}
 
   <!-- ── Hit list ──────────────────────────────────────────────────────────── -->
-  <div class="flex-1 [scrollbar-color:theme(colors.zinc.300)_transparent]">
+  <div class="flex-1">
     {#if loading}
       <!-- Skeleton cards -->
       <div class="h-full w-full flex flex-col items-center justify-center gap-4">
@@ -124,7 +124,7 @@
       </div>
 
     {:else if response && response.hits.length > 0}
-      <ul class="space-y-3">
+      <ul class="w-full space-y-3">
         {#each response.hits as hit, i}
           <li
               class="cursor-pointer"
