@@ -2,7 +2,6 @@
   import { BookOpen } from "@lucide/svelte"
   import type { Hit } from "meilisearch"
   import { DI } from "../../ts/service/DI"
-  import { SearchResultPresenter } from "../../ts/ui/presenter/SearchResultPresenter"
 
   let { hit, hasImageUrls = false }: { hit: Hit, hasImageUrls?: boolean } = $props()
 
@@ -35,7 +34,7 @@
           src={imageUrl}
           alt={title}
           onerror={() => (imgError = true)}
-          class="size-20 rounded-xl object-cover ring-1 ring-zinc-100"
+          class="size-20 rounded-lg object-cover ring-1 ring-zinc-100"
       />
     {:else}
       <!-- Placeholder icon -->

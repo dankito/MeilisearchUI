@@ -3,6 +3,9 @@
   import type { MeiliService } from "../ts/service/MeiliService"
   import Header from "./mainMenu/Header.svelte"
   import SearchResultsList from "./searchresults/SearchResultsList.svelte"
+  import type { Hit } from "meilisearch"
+  import SearchResultDetail from "./searchresults/SearchResultDetail.svelte"
+  import { Constants } from "../ts/service/Constants"
 
   let { viewState }: { viewState: ViewState } = $props()
 
@@ -26,13 +29,27 @@
 
     //viewState.keys = (await meili.client.getKeys()).results
   }
+
+
+  function selectHit(hit: Hit) {
+    viewState.selectedHit = hit
+  }
 </script>
 
 
 <div class="w-full h-dvh flex flex-col">
   <Header {viewState} />
 
-  <main class="flex-1 w-full h-full min-h-0 flex flex-col items-center justify-center">
-    <SearchResultsList {viewState} />
+  <main class="flex-1 w-full h-full min-h-0 flex flex-col md:flex-row">
+    <SearchResultsList {viewState} onItemSelected={selectHit} />
+
+    {#if viewState.selectedHit}
+      {#if Constants.isSmallScreen}
+      {:else}
+        <div class="flex-1">
+          <SearchResultDetail hit={viewState.selectedHit} {viewState} />
+        </div>
+      {/if}
+    {/if}
   </main>
 </div>

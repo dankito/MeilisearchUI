@@ -1,0 +1,56 @@
+<script lang="ts">
+  import { X } from "@lucide/svelte"
+  import type { Hit } from "meilisearch"
+  import { DI } from "../../ts/service/DI"
+  import type { ViewState } from "../../ts/ui/state/ViewState.svelte"
+  import Card from "../common/form/Card.svelte"
+  import FieldValue from "./FieldValue.svelte"
+
+  let { hit, viewState }: { hit: Hit, viewState: ViewState } = $props()
+
+  const presenter = DI.searchResultPresenter
+
+  let title = $derived(presenter.getTitle(hit, presenter.findTitleKey(hit)))
+
+  let imageUrl = $derived(presenter.findImageUrl(hit))
+
+  let keys = $derived(Object.keys(hit))
+
+
+  function closeDetailView() {
+    viewState.selectedHit = undefined
+  }
+</script>
+
+<div class="w-full h-full min-h-0 flex flex-col gap-3 px-2 py-3 bg-wheat">
+  <Card class="flex-1 min-h-0 flex flex-col gap-3 px-3 py-3">
+    <div class="shrink-0 flex flex-row gap-3 items-center">
+      <div class="flex-1 text-base font-medium truncate">
+        { title }
+      </div>
+
+      <button class="shrink-0 size-9 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200" onclick={closeDetailView}>
+        <X size={20} />
+      </button>
+    </div>
+
+    <div class="flex-1 flex flex-col gap-3 overflow-y-auto">
+      {#if imageUrl}
+        <div class="shrink-0 w-full h-64 flex flex-col items-center justify-center">
+          <img src={imageUrl} alt={title} class="h-full mx-auto rounded-2xl object-cover shadow-lg ring-1 ring-zinc-100" />
+        </div>
+      {/if}
+
+      <div class="flex-1 flex flex-col gap-3.5">
+        {#each keys as key}
+          <div class="w-full flex flex-col gap-0.5">
+            <dt class="shrink-0 text-zinc-400 font-semibold">{key}</dt>
+            <dd class="flex-1 w-full leading-relaxed">
+              <FieldValue value={hit[key]} />
+            </dd>
+          </div>
+        {/each}
+      </div>
+    </div>
+  </Card>
+</div>

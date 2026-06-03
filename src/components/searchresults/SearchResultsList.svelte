@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { ViewState } from "../../ts/ui/state/ViewState.svelte"
   import type { MeiliService } from "../../ts/service/MeiliService.ts"
-  import type { Hit, Index, MatchingStrategies, RecordAny } from "meilisearch"
+  import type { Hit, Index, MatchingStrategies } from "meilisearch"
   import SearchResultCard from "./SearchResultCard.svelte"
   import { DI } from "../../ts/service/DI"
 
-  let { viewState }: { viewState: ViewState } = $props()
+  let { viewState, onItemSelected }: { viewState: ViewState, onItemSelected?: (hit: Hit) => void } = $props()
 
   const presenter = DI.searchResultPresenter
 
@@ -35,6 +35,7 @@
     search.page = 0
 
     response = undefined
+    viewState.selectedHit = undefined
     loading = true
 
     if (meili && index) {
@@ -44,7 +45,7 @@
   }
 
   function itemSelected(hit: Hit) {
-    //onSelect?.(hit)
+    onItemSelected?.(hit)
   }
 
   function formatMs(ms: number): string {
@@ -52,7 +53,7 @@
   }
 </script>
 
-<section class="flex w-full h-full min-h-0 max-w-200 mx-auto flex-col font-sans overflow-x-hidden overflow-y-auto px-2 py-1.5">
+<section class="flex-1 flex w-full h-full min-h-0 max-w-200 mx-auto flex-col font-sans overflow-x-hidden overflow-y-auto px-2 py-1.5">
 
   <!-- ── Meta bar ─────────────────────────────────────────────────────────── -->
   <div class="flex items-center justify-between border-b border-zinc-100 mb-2">

@@ -1,5 +1,5 @@
 import { MeiliService } from "../../service/MeiliService"
-import type { Index, Stats } from "meilisearch"
+import type { Hit, Index, Stats } from "meilisearch"
 import { SearchState } from "./SearchState.svelte"
 
 export class ViewState {
@@ -20,6 +20,9 @@ export class ViewState {
 
   selectedIndex = $state<Index | undefined>(undefined)
 
+
   search = $state(new SearchState())
+
+  selectedHit = $state<Hit | undefined>(undefined)
 
 }
