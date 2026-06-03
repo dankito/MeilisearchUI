@@ -5,26 +5,36 @@ export class SearchResultPresenter {
   // ── Heuristics ────────────────────────────────────────────────────────────
 
   /** Keys that are almost certainly not worth showing in a card overview */
-  static BORING_KEYS = new Set([
+  static BoringKeys = new Set([
     "slug", "created_at", "updated_at", "createdAt",
     "updatedAt", "password", "hash", "__v", "_rankingScore",
   ])
 
-  static ID_KEYS = [
+  static IdKeys = [
     "id", "_id", "uuid",
   ]
 
-  /** Priority keys shown first if present */
-  static PRIORITY_KEYS = [
+  static TitleKeys = [
     "title", "name", "label", "headline", "subject",
-    "description", "summary", "excerpt", "body", "content",
-    "author", "category", "type", "status", "tags",
+    "description", "summary", "excerpt",
+    "type", "status",
+  ]
+
+  /** Priority keys shown first if present */
+  static PriorityKeys = [
+    ...SearchResultPresenter.TitleKeys,
+    "body", "content",
+    "author", "category", "tags",
     "price", "rating", "date", "year",
   ]
 
   static URL_PATTERN = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|avif|svg)(\?.*)?$/i
   static HTTP_PATTERN = /^https?:\/\//i
 
+
+  findTitleKey(hit: Hit): string | null {
+    return SearchResultPresenter.TitleKeys.find(k => k in hit && typeof hit[k] === "string") ?? null
+  }
 
   findImageUrl(hit: Hit): string | null {
     // Look for image in any value
@@ -68,13 +78,13 @@ export class SearchResultPresenter {
   }
 
   determineBodyFields(hit: Hit, titleKey: string | null): string[] {
-    const allKeys = Object.keys(hit).filter(k => !SearchResultPresenter.BORING_KEYS.has(k) && k !== titleKey && !this.isImageUrl(hit[k]))
+    const allKeys = Object.keys(hit).filter(k => !SearchResultPresenter.BoringKeys.has(k) && k !== titleKey && !this.isImageUrl(hit[k]))
 
-    const idKey = allKeys.find(k => SearchResultPresenter.ID_KEYS.includes(k))
+    const idKey = allKeys.find(k => SearchResultPresenter.IdKeys.includes(k))
 
-    const prioritised = SearchResultPresenter.PRIORITY_KEYS
+    const prioritised = SearchResultPresenter.PriorityKeys
       .filter(k => allKeys.includes(k))
-      .concat(allKeys.filter(k => !SearchResultPresenter.PRIORITY_KEYS.includes(k)))
+      .concat(allKeys.filter(k => !SearchResultPresenter.PriorityKeys.includes(k)))
 
     let idAndPrioritised = prioritised
       .filter(k => {

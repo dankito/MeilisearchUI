@@ -13,7 +13,7 @@
 
   let imageUrl = $derived(presenter.findImageUrl(hit))
 
-  const titleKey = $derived(SearchResultPresenter.PRIORITY_KEYS.slice(0, 5).find(k => k in hit && typeof hit[k] === "string") ?? null)
+  const titleKey = $derived(presenter.findTitleKey(hit))
 
   const title = $derived(presenter.getTitle(hit, titleKey))
 
