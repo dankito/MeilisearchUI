@@ -5,6 +5,7 @@
   import type { ViewState } from "../../ts/ui/state/ViewState.svelte"
   import Card from "../common/form/Card.svelte"
   import FieldValue from "./FieldValue.svelte"
+  import ClosableHeader from "../common/controls/ClosableHeader.svelte"
 
   let { hit, viewState }: { hit: Hit, viewState: ViewState } = $props()
 
@@ -22,17 +23,9 @@
   }
 </script>
 
-<div class="w-full h-full min-h-0 flex flex-col gap-3 px-2 py-3 bg-wheat">
+<div class="w-full h-full min-h-0 flex flex-col gap-3 px-2 py-3">
   <Card class="flex-1 min-h-0 flex flex-col gap-3 px-3 py-3">
-    <div class="shrink-0 flex flex-row gap-3 items-center">
-      <div class="flex-1 text-base font-medium truncate">
-        { title }
-      </div>
-
-      <button class="shrink-0 size-9 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200" onclick={closeDetailView}>
-        <X size={20} />
-      </button>
-    </div>
+    <ClosableHeader {title} onClose={closeDetailView} />
 
     <div class="flex-1 flex flex-col gap-3 overflow-y-auto">
       {#if imageUrl}

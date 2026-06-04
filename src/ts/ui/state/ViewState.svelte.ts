@@ -25,4 +25,9 @@ export class ViewState {
 
   selectedHit = $state<Hit | undefined>(undefined)
 
+
+  // Dialogs
+
+  showIndexSettingsDialog = $state(false)
+
 }

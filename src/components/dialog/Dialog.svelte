@@ -48,7 +48,7 @@
       </div>
     {/if}
 
-    <div class="flex-1 max-w-full min-h-0">
+    <div class="max-w-full min-h-0">
       {@render children()}
     </div>
   </div>

@@ -7,6 +7,7 @@
   import SearchResultDetail from "./searchresults/SearchResultDetail.svelte"
   import { Constants } from "../ts/service/Constants"
   import Dialog from "./dialog/Dialog.svelte"
+  import IndexSettingsDialog from "./dialog/IndexSettingsDialog.svelte"
 
   let { viewState }: { viewState: ViewState } = $props()
 
@@ -57,3 +58,8 @@
     {/if}
   </main>
 </div>
+
+
+{#if viewState.showIndexSettingsDialog && meili}
+ <IndexSettingsDialog {viewState} {meili} />
+{/if}
