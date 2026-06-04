@@ -1,6 +1,7 @@
 <script lang="ts">
   import { DI } from "../../ts/service/DI"
   import Card from "../common/form/Card.svelte"
+  import MarkdownContent from "../common/controls/MarkdownContent.svelte"
 
   let { value }: { value: any } = $props()
 
@@ -14,6 +15,8 @@
 
   let open = $state(false)
 
+  let isMarkdown = $derived(typeof value === "string" && presenter.isProbablyMarkdown(value))
+
   let isHtml = $derived(typeof value === "string" && value.startsWith("<") && value.endsWith(">"))
 
   let isCode = $derived(typeof value === "object" || (typeof value === "string" && value.includes("\n")))
@@ -26,18 +29,31 @@
    * A value is "long" if its formatted string contains more than CLAMP_LINES newlines
    * OR is longer than ~300 chars (proxy for multi-line display).
    */
-  function isLong(val: string): boolean {
-    const lines = val.split("\n").length
-    return lines > CLAMP_LINES || val.length > 300
+  function isLong(value: string): boolean {
+    const lines = value.split("\n").length
+    return lines > CLAMP_LINES || value.length > 300
   }
 
-  function formatValue(v: unknown): string {
-    if (v === null || v === undefined) return ""
-    if (Array.isArray(v)) return v.map(item =>
-      typeof item === "object" ? JSON.stringify(item, null, 2) : String(item)
-    ).join("\n")
-    if (typeof v === "object") return JSON.stringify(v, null, 2)
-    return String(v)
+  function formatValue(value: unknown): string {
+    if (value === null || value === undefined) {
+      return ""
+    }
+
+    if (typeof value === "string") {
+      return value
+    }
+
+    if (Array.isArray(value)) {
+      return value.map(item =>
+        typeof item === "object" ? JSON.stringify(item, null, 2) : String(item)
+      ).join("\n")
+    }
+
+    if (typeof value === "object") {
+      return JSON.stringify(value, null, 2)
+    }
+
+    return String(value)
   }
 </script>
 
@@ -51,7 +67,12 @@
 
 {:else if isHtml}
   <Card class="prose prose-sm prose-zinc max-w-none border border-zinc-200 p-3">
-    {@html formatted}
+    {@html value}
+  </Card>
+
+{:else if isMarkdown}
+  <Card class="max-w-none border border-zinc-200 p-3">
+    <MarkdownContent content={value} />
   </Card>
 
 {:else if isCode}

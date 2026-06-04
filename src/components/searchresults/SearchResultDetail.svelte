@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { X } from "@lucide/svelte"
   import type { Hit } from "meilisearch"
   import { DI } from "../../ts/service/DI"
   import type { ViewState } from "../../ts/ui/state/ViewState.svelte"

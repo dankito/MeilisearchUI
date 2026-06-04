@@ -31,6 +31,19 @@ export class SearchResultPresenter {
   static URL_PATTERN = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|avif|svg)(\?.*)?$/i
   static HTTP_PATTERN = /^https?:\/\//i
 
+  static MarkdownPatterns = [
+    /^#{1,6}\s/m,           // headings
+    /\*\*.*?\*\*/,          // bold
+    // /\*.*?\*/,              // italic
+    /\[.*?\]\(.*?\)/,       // links
+    /`[^`]+`/,              // inline code
+    /^```/m,                // code blocks
+    ///^[-*+]\s/m,            // unordered lists
+    ///^\d+\.\s/m,            // ordered lists
+    /^>\s/m,                // blockquotes
+    /^---$/m,               // horizontal rule
+  ]
+
 
   findTitleKey(hit: Hit): string | null {
     return SearchResultPresenter.TitleKeys.find(k => k in hit && typeof hit[k] === "string") ?? null
@@ -121,6 +134,11 @@ export class SearchResultPresenter {
       return JSON.stringify(val)
     }
     return String(val)
+  }
+
+
+  isProbablyMarkdown(text: string): boolean {
+    return SearchResultPresenter.MarkdownPatterns.some(p => p.test(text))
   }
 
 }
