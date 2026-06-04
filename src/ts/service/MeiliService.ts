@@ -1,4 +1,4 @@
-import { Meilisearch, type MultiSearchParams, type MultiSearchQuery, type MultiSearchResponse, type SearchResponse } from "meilisearch"
+import { type DocumentQuery, Meilisearch, type MultiSearchParams, type MultiSearchQuery, type MultiSearchResponse, type RecordAny, type SearchResponse } from "meilisearch"
 import { SearchState } from "../ui/state/SearchState.svelte"
 
 export class MeiliService {
@@ -16,6 +16,14 @@ export class MeiliService {
     const response: MultiSearchResponse = await this.client.multiSearch(params)
 
     return response.results[0]
+  }
+
+  async getDocument(indexName: string, documentId: string): Promise<RecordAny> {
+    const query: DocumentQuery = {
+      fields: ["*"]
+    }
+
+    return await this.client.index(indexName).getDocument(documentId, query)
   }
 
 }

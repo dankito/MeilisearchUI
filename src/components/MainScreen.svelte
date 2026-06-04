@@ -41,8 +41,18 @@
   }
 
 
-  function selectHit(hit: Hit) {
+  async function selectHit(hit: Hit) {
     viewState.selectedHit = hit
+
+    const index = viewState.selectedIndex
+    if (meili && index) {
+      const primaryKey = index!!.primaryKey
+      if (primaryKey) {
+        const documentId = hit[primaryKey]
+        meili.getDocument(index.uid, documentId)
+          .then(fullDocument => viewState.selectedHit = fullDocument)
+      }
+    }
   }
 </script>
 
