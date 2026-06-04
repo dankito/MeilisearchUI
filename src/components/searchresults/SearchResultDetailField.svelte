@@ -28,9 +28,9 @@
 
     {#if isLongValue}
       <button onclick={() => isExpanded = !isExpanded}
-              class="mt-1 flex items-center gap-1 font-medium text-primary hover:text-primary/80 transition-colors">
+              class="flex items-center gap-1 py-1.5 font-medium text-primary hover:text-primary/80 transition-colors">
         {isExpanded ? "Collapse" : "Expand"}
-        <svg class="h-3.5 w-3.5 transition-transform duration-200"
+        <svg class="size-4 transition-transform duration-200"
              class:rotate-180={isExpanded}
              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -40,6 +40,6 @@
   </div>
 
   <dd class="flex-1 w-full leading-relaxed">
-    <FieldValue {value} {isLongValue} {isExpanded} />
+    <FieldValue {value} clampHeight={isLongValue && !!!isExpanded} />
   </dd>
 </div>
