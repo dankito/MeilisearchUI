@@ -13,40 +13,36 @@
 
   let open = $state(false)
 
-  let isCode = $derived(typeof value === 'object' || (typeof value === 'string' && value.includes('\n')))
+  let isCode = $derived(typeof value === "object" || (typeof value === "string" && value.includes("\n")))
 
 
   // After how many lines a value gets the expand toggle
-  const CLAMP_LINES = 4;
+  const CLAMP_LINES = 4
 
   /**
    * A value is "long" if its formatted string contains more than CLAMP_LINES newlines
    * OR is longer than ~300 chars (proxy for multi-line display).
    */
   function isLong(val: string): boolean {
-    const lines = val.split('\n').length;
-    return lines > CLAMP_LINES || val.length > 300;
+    const lines = val.split("\n").length
+    return lines > CLAMP_LINES || val.length > 300
   }
 
   function formatValue(v: unknown): string {
-    if (v === null || v === undefined) return '';
+    if (v === null || v === undefined) return ""
     if (Array.isArray(v)) return v.map(item =>
-      typeof item === 'object' ? JSON.stringify(item, null, 2) : String(item)
-    ).join('\n');
-    if (typeof v === 'object') return JSON.stringify(v, null, 2);
-    return String(v);
+      typeof item === "object" ? JSON.stringify(item, null, 2) : String(item)
+    ).join("\n")
+    if (typeof v === "object") return JSON.stringify(v, null, 2)
+    return String(v)
   }
 </script>
 
 
 
-{#if isUrl && typeof value === 'string'}
-  <a
-      href={value}
-      target="_blank"
-      rel="noopener"
-      class="text-primary underline underline-offset-2 break-all hover:text-primary/80"
-  >
+{#if isUrl && typeof value === "string"}
+  <a href={value} target="_blank" rel="noopener"
+      class="text-primary underline underline-offset-2 break-all hover:text-primary/80" >
     {value}
   </a>
 
@@ -70,7 +66,7 @@
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
-        {open ? 'Collapse' : 'Expand'}
+        {open ? "Collapse" : "Expand"}
       </button>
     {/if}
   </div>
@@ -96,7 +92,7 @@
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
-        {open ? 'Collapse' : 'Expand'}
+        {open ? "Collapse" : "Expand"}
       </button>
     {/if}
   </div>
