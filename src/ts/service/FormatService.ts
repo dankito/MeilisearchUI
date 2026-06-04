@@ -14,4 +14,8 @@ export class FormatService {
     return date.toLocaleString()
   }
 
+  formatNumber(numberOfDocuments: number): string {
+    return numberOfDocuments.toLocaleString()
+  }
+
 }
