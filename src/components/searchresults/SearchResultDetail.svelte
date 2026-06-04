@@ -3,8 +3,8 @@
   import { DI } from "../../ts/service/DI"
   import type { ViewState } from "../../ts/ui/state/ViewState.svelte"
   import Card from "../common/form/Card.svelte"
-  import FieldValue from "./FieldValue.svelte"
   import ClosableHeader from "../common/controls/ClosableHeader.svelte"
+  import SearchResultDetailField from "./SearchResultDetailField.svelte"
 
   let { hit, viewState }: { hit: Hit, viewState: ViewState } = $props()
 
@@ -33,16 +33,11 @@
         </div>
       {/if}
 
-      <div class="flex-1 flex flex-col gap-3.5">
+      <dl class="flex-1 flex flex-col gap-3.5">
         {#each keys as key}
-          <div class="w-full flex flex-col gap-0.5">
-            <dt class="shrink-0 text-zinc-400 font-semibold">{key}</dt>
-            <dd class="flex-1 w-full leading-relaxed">
-              <FieldValue value={hit[key]} />
-            </dd>
-          </div>
+          <SearchResultDetailField {key} value={hit[key]} />
         {/each}
-      </div>
+      </dl>
     </div>
   </Card>
 </div>
