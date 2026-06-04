@@ -1,5 +1,6 @@
 <script lang="ts">
   import { DI } from "../../ts/service/DI"
+  import Card from "../common/form/Card.svelte"
 
   let { value }: { value: any } = $props()
 
@@ -12,6 +13,8 @@
   let long = $derived(isLong(formatted))
 
   let open = $state(false)
+
+  let isHtml = $derived(typeof value === "string" && value.startsWith("<") && value.endsWith(">"))
 
   let isCode = $derived(typeof value === "object" || (typeof value === "string" && value.includes("\n")))
 
@@ -45,6 +48,11 @@
       class="text-primary underline underline-offset-2 break-all hover:text-primary/80" >
     {value}
   </a>
+
+{:else if isHtml}
+  <Card class="prose prose-sm prose-zinc max-w-none border border-zinc-200 p-3">
+    {@html formatted}
+  </Card>
 
 {:else if isCode}
   <!-- Multiline / JSON: monospace block -->
