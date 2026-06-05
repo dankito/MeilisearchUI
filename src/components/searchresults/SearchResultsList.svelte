@@ -53,7 +53,7 @@
   }
 </script>
 
-<section class="flex-1 flex w-full h-full min-h-0 max-w-200 mx-auto flex-col font-sans overflow-x-hidden overflow-y-auto px-2 py-1.5">
+<section class="flex-1 flex w-full h-full min-w-0 min-h-0 max-w-200 mx-auto flex-col font-sans overflow-x-hidden overflow-y-auto px-2 py-1.5">
 
   <!-- ── Meta bar ─────────────────────────────────────────────────────────── -->
   <div class="flex items-center justify-between border-b border-zinc-100 mb-2">

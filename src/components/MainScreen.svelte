@@ -69,7 +69,7 @@
           <SearchResultDetail hit={viewState.selectedHit} {viewState} />
         </Dialog>
       {:else}
-        <div class="flex-1">
+        <div class="flex-1 min-w-0">
           <SearchResultDetail hit={viewState.selectedHit} {viewState} />
         </div>
       {/if}
