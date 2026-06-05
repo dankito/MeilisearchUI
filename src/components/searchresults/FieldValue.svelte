@@ -13,7 +13,7 @@
 
   let isMarkdown = $derived(typeof value === "string" && presenter.isProbablyMarkdown(value))
 
-  let isHtml = $derived(typeof value === "string" && value.startsWith("<") && value.endsWith(">"))
+  let isHtml = $derived(typeof value === "string" && value.trimStart().startsWith("<") && value.trimEnd().endsWith(">"))
 
   let isCode = $derived(typeof value === "object" || (typeof value === "string" && value.includes("\n")))
 
