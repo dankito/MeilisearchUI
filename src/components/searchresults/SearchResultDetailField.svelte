@@ -1,5 +1,6 @@
 <script lang="ts">
   import FieldValue from "./FieldValue.svelte"
+  import { DI } from "../../ts/service/DI"
 
   let { key, value }: { key: string, value: any } = $props()
 
@@ -7,6 +8,8 @@
   let isLongValue = $derived(typeof value === "string" && isLong(value))
 
   let isExpanded = $state(false)
+
+  const utils = DI.utils
 
 
   // After how many lines a value gets the expand toggle
@@ -20,11 +23,21 @@
     const lines = value.split("\n").length
     return lines > CLAMP_LINES || value.length > 300
   }
+
+  async function copyToClipboard() {
+    await utils.copyToClipboard(value) // TODO: add if it's html
+  }
 </script>
 
 <div class="w-full flex flex-col gap-0.5">
   <div class="w-full flex flex-row items-center">
-    <dt class="flex-1 text-zinc-400 font-semibold">{key}</dt>
+    <div class="flex-1 flex flex-row items-center gap-1">
+      <dt class="text-zinc-400 font-semibold">{key}</dt>
+
+      <button onclick={copyToClipboard} aria-label="Copy displayed content to clipboard" class="">
+        <span class="ml-0.5 lg:ml-1.5 icon-[mdi--content-copy] text-zinc-500 size-4.5 cursor-pointer"></span>
+      </button>
+    </div>
 
     {#if isLongValue}
       <button onclick={() => isExpanded = !isExpanded}
