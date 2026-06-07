@@ -11,7 +11,8 @@ export class MeiliService {
 
 
   async search(indexName: string, search: SearchState): Promise<SearchResponse> {
-    const searchQuery: MultiSearchQuery = { indexUid: indexName, q: search.query, limit: search.pageSize, offset: search.page, matchingStrategy: search.matchingStrategy }
+    const offset = search.page * search.pageSize
+    const searchQuery: MultiSearchQuery = { indexUid: indexName, q: search.query, limit: search.pageSize, offset: offset, matchingStrategy: search.matchingStrategy }
     const params: MultiSearchParams = { queries: [ searchQuery ] }
     const response: MultiSearchResponse = await this.client.multiSearch(params)
 
