@@ -28,19 +28,44 @@
   let loading = $state(false)
 
 
+  // don't know why, but effects for viewState properties also fire when there is no change, so keep track of previous values
+  let previousIndexUid: string | undefined = undefined
+  let previousQuery: string | undefined = undefined
+  let previousMatchingStrategy: MatchingStrategies | undefined = undefined
+
   $effect(() => {
-    // do not remove the 'unused' parameters, they are a signal for reactive system to trigger search
-    doSearch(meili, viewState.selectedIndex, search.query, search.matchingStrategy).then(() => { })
+    if (previousIndexUid !== viewState.selectedIndex?.uid) {
+      previousIndexUid = viewState.selectedIndex?.uid
+
+      resetHitsAndSearch()
+    }
   })
 
-  async function doSearch(meili: MeiliService | undefined, index: Index | undefined, query: string, matchingStrategy: MatchingStrategies) {
-    search.page = 0
+  $effect(() => {
+    if (previousQuery !== search.query) {
+      previousQuery = search.query
 
-    response = undefined
-    if (search.page === 0) {
-      hits = []
-      viewState.selectedHit = undefined
+      resetHitsAndSearch()
     }
+  })
+
+  $effect(() => {
+    if (previousMatchingStrategy !== search.matchingStrategy) {
+      previousMatchingStrategy = search.matchingStrategy
+
+      resetHitsAndSearch()
+    }
+  })
+
+  async function resetHitsAndSearch() {
+    search.page = 0
+    hits = []
+    viewState.selectedHit = undefined
+
+    await doSearch()
+  }
+
+  async function doSearch(index: Index | undefined = viewState.selectedIndex) {
     loading = true
 
     if (meili && index) {
