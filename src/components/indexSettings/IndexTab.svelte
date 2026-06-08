@@ -71,7 +71,7 @@
     {#each indices as index (index.uid)}
       <li class="my-3">
         <button onclick={e => { e.stopPropagation(); indexSelected(index) }} aria-label="Select index {index.uid}"
-                class=""
+                class="w-full flex"
                 class:text-primary={selectedIndex?.uid === index.uid}>
           {index.uid}
         </button>
