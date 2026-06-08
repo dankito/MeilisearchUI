@@ -15,11 +15,13 @@
 
   let response = $derived(search.searchResponse)
 
-  let totalHits = $derived(response?.totalHits ?? response?.estimatedTotalHits ?? response?.hits?.length ?? 0)
+  let hits = $state<Hit[]>([])
+
+  let totalHits = $derived(response?.totalHits ?? response?.estimatedTotalHits ?? hits?.length)
 
   let isEstimated = $derived(response && !("totalHits" in response) && "estimatedTotalHits" in response)
 
-  let hasImageUrls = $derived(response?.hits.some(hit => presenter.findImageUrl(hit)) ?? false)
+  let hasImageUrls = $derived(hits.some(hit => presenter.findImageUrl(hit)) ?? false)
 
   let hasFacets = $derived(response?.facetDistribution && Object.keys(response.facetDistribution).length > 0)
 
@@ -35,12 +37,16 @@
     search.page = 0
 
     response = undefined
-    viewState.selectedHit = undefined
+    if (search.page === 0) {
+      hits = []
+      viewState.selectedHit = undefined
+    }
     loading = true
 
     if (meili && index) {
       try {
         response = await meili.search(index.uid, search)
+        hits.push(...response.hits)
       } catch (e) {
         console.error("Error searching:", e) // TODO: display error to user
       }
@@ -130,9 +136,9 @@
         </ul>
       </div>
 
-    {:else if response && response.hits.length > 0}
+    {:else if hits.length > 0}
       <ul class="w-full space-y-3">
-        {#each response.hits as hit, i}
+        {#each hits as hit, i}
           <li
               class="cursor-pointer"
               style="animation-delay: {i * 30}ms"
@@ -147,13 +153,13 @@
       </ul>
 
       <!-- Pagination hint -->
-      {#if response.totalPages && response.totalPages > 1}
+      {#if response && response.totalPages && response.totalPages > 1}
         <p class="mt-4 text-center text-xs text-zinc-400">
           Page {response.page ?? 1} of {response.totalPages}
         </p>
       {/if}
 
-    {:else if response && response.hits.length === 0}
+    {:else if response && hits.length === 0}
       <!-- Empty state -->
       <div class="flex flex-col items-center justify-center py-20 text-center">
         <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-50 ring-1 ring-zinc-200">
