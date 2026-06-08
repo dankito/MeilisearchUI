@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { ViewState } from "../../ts/ui/state/ViewState.svelte"
-  import type { MeiliService } from "../../ts/service/MeiliService.ts"
   import type { Hit, Index, MatchingStrategies } from "meilisearch"
   import SearchResultCard from "./SearchResultCard.svelte"
   import { DI } from "../../ts/service/DI"
@@ -26,6 +25,8 @@
   let hasFacets = $derived(response?.facetDistribution && Object.keys(response.facetDistribution).length > 0)
 
   let loading = $state(false)
+
+  let hasMoreItems = $state(false)
 
 
   // don't know why, but effects for viewState properties also fire when there is no change, so keep track of previous values
@@ -71,7 +72,12 @@
     if (meili && index) {
       try {
         response = await meili.search(index.uid, search)
-        hits.push(...response.hits)
+        hits = [...hits, ...response.hits]
+
+        const countRetrievedItems = search.page * search.pageSize + response.hits.length
+        hasMoreItems = response.totalPages ? search.page < response.totalPages :
+          response.totalHits ? countRetrievedItems < response.totalHits :
+            response.estimatedTotalHits ? countRetrievedItems < response.estimatedTotalHits : false
       } catch (e) {
         console.error("Error searching:", e) // TODO: display error to user
       }
@@ -84,12 +90,28 @@
     onItemSelected?.(hit)
   }
 
+  async function onScroll(event: UIEvent) {
+    const element = event.currentTarget as HTMLElement
+    const nearBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 200
+    if (nearBottom) {
+      await loadMore()
+    }
+  }
+
+  async function loadMore() {
+    if (hasMoreItems) {
+      search.page++
+
+      await doSearch()
+    }
+  }
+
   function formatMs(ms: number): string {
     return ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(2)} s`
   }
 </script>
 
-<section class="flex-1 flex w-full h-full min-w-0 min-h-0 max-w-200 mx-auto flex-col font-sans overflow-x-hidden overflow-y-auto px-2 py-1.5">
+<section class="flex-1 flex w-full h-full min-w-0 min-h-0 max-w-200 mx-auto flex-col font-sans overflow-x-hidden overflow-y-auto px-2 py-1.5" onscroll={onScroll}>
 
   <!-- ── Meta bar ─────────────────────────────────────────────────────────── -->
   <div class="flex items-center justify-between border-b border-zinc-100 mb-2">
@@ -135,7 +157,7 @@
 
   <!-- ── Hit list ──────────────────────────────────────────────────────────── -->
   <div class="flex-1">
-    {#if loading}
+    {#if loading && hits.length === 0}
       <!-- Skeleton cards -->
       <div class="h-full w-full flex flex-col items-center justify-center gap-4">
         <div class="flex items-center gap-2 text-sm text-zinc-400 mb-5">
