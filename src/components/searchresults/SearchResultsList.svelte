@@ -120,8 +120,8 @@
         {#if response.query}
           Results for <span class="font-semibold text-zinc-800">"{response.query}"</span> —
         {/if}
-        <span class="font-semibold text-zinc-800">{totalHits.toLocaleString()}</span>
-        {isEstimated ? '~' : ''} hit{totalHits !== 1 ? 's' : ''}
+        <span class="font-semibold text-zinc-800">{hits.length.toLocaleString()} / {isEstimated ? '~' : ''}{totalHits.toLocaleString()}</span>
+         hit{totalHits !== 1 ? 's' : ''}
       </div>
       <div class="flex items-center gap-1 rounded-full bg-zinc-50 px-2.5 py-1
                    text-[11px] font-medium text-zinc-400 ring-1 ring-zinc-200">
