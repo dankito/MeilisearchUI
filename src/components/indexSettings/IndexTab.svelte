@@ -63,6 +63,10 @@
     return array.join("\n")
   }
 
+  function formatBytes(bytes: number): string {
+    return formatService.formatBytes(bytes)
+  }
+
 </script>
 
 
@@ -98,8 +102,8 @@
           <LabelledValue label="Number of documents" value={indexStats.numberOfDocuments.toString()} />
           <LabelledValue label="Number of embedded documents" value={indexStats.numberOfEmbeddedDocuments.toString()} />
           <LabelledValue label="Number of embeddings" value={indexStats.numberOfEmbeddings.toString()} />
-          <LabelledValue label="DB size" value={indexStats.rawDocumentDbSize.toString()} />
-          <LabelledValue label="Average document size" value={indexStats.avgDocumentSize.toString()} />
+          <LabelledValue label="DB size" value={formatBytes(indexStats.rawDocumentDbSize)} />
+          <LabelledValue label="Average document size" value={formatBytes(indexStats.avgDocumentSize)} />
           <LabelledValue label="Is indexing" value={indexStats.isIndexing.toString()} />
 
           <div class="font-semibold mt-2">Field distribution</div>
