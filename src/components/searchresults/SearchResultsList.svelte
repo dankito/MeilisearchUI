@@ -39,9 +39,14 @@
     loading = true
 
     if (meili && index) {
-      response = await meili.search(index.uid, search)
-      loading = false
+      try {
+        response = await meili.search(index.uid, search)
+      } catch (e) {
+        console.error("Error searching:", e) // TODO: display error to user
+      }
     }
+
+    loading = false
   }
 
   function itemSelected(hit: Hit) {
