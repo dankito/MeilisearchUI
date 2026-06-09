@@ -1,4 +1,4 @@
-import { MatchingStrategies, type SearchResponse } from "meilisearch"
+import { type Hit, MatchingStrategies, type SearchResponse } from "meilisearch"
 
 export class SearchState {
 
@@ -10,5 +10,7 @@ export class SearchState {
   pageSize = 25
 
   searchResponse = $state<SearchResponse | undefined>(undefined)
+
+  hits = $state<Hit[]>([])
 
 }

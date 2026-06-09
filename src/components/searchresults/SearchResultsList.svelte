@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { CircleAlert } from "@lucide/svelte"
   import type { ViewState } from "../../ts/ui/state/ViewState.svelte"
   import type { Hit, Index, MatchingStrategies } from "meilisearch"
   import SearchResultCard from "./SearchResultCard.svelte"
   import { DI } from "../../ts/service/DI"
+  import Error from "../common/controls/Error.svelte"
 
   let { viewState, onItemSelected }: { viewState: ViewState, onItemSelected?: (hit: Hit) => void } = $props()
 
@@ -17,7 +17,7 @@
 
   let response = $derived(search.searchResponse)
 
-  let hits = $state<Hit[]>([])
+  let hits = $derived(search.hits)
 
   let totalHits = $derived(response?.totalHits ?? response?.estimatedTotalHits ?? hits?.length)
 
@@ -75,8 +75,9 @@
 
     if (meili && index) {
       try {
-        response = await meili.search(index.uid, search)
-        hits = [...hits, ...response.hits]
+        const response = await meili.search(index.uid, search)
+        search.searchResponse = response
+        search.hits = [...hits, ...response.hits]
         searchError = undefined
 
         const countRetrievedItems = search.page * search.pageSize + response.hits.length
@@ -117,12 +118,7 @@
 </script>
 
 <section class="flex-1 flex w-full h-full min-w-0 min-h-0 max-w-200 mx-auto flex-col font-sans overflow-x-hidden overflow-y-auto px-2 py-1.5" onscroll={onScroll}>
-  {#if searchError}
-    <div class="flex items-center justify-start gap-3 mt-1 mb-3 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm shadow-md">
-      <CircleAlert class="w-4 h-4 mt-0.5 shrink-0" />
-      <div class="whitespace-pre">{searchError}</div>
-    </div>
-  {/if}
+  <Error errorMessage={searchError} />
 
   <!-- ── Meta bar ─────────────────────────────────────────────────────────── -->
   <div class="flex items-center justify-between border-b border-zinc-100 mb-2">
