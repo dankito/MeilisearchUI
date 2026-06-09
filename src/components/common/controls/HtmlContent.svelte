@@ -25,7 +25,8 @@
       }
       postHeight()
       new ResizeObserver(postHeight).observe(document.body)
-    <\/script>`
+    <\/script>
+    <style>body { overflow: auto; }<\/style>`
 
     if (html.includes("</body>")) {
       return html.replace("</body>", `${heightScript}</body>`)
@@ -35,10 +36,6 @@
     <html>
       <head>
         <meta charset="utf-8">
-        <style>
-          * { box-sizing: border-box; }
-          body { margin: 0; padding: 0; overflow: hidden; }
-        </style>
       </head>
       <body>
         ${html}
@@ -53,6 +50,6 @@
 
 <!-- to avoid that html destroys our layout we have to use an iframe -->
 <iframe srcdoc={srcdoc} sandbox="allow-scripts" title="HTML preview"
-        class="w-full border-none block" style="height: {iframeHeight}px;">
+        class="w-full" style="height: {iframeHeight}px;">
 
 </iframe>
