@@ -100,28 +100,18 @@ export class SearchResultPresenter {
   }
 
   determineDisplayedFields(hit: Hit, titleKey: string | undefined, idKey: string | undefined): string[] {
-    const allKeys = Object.keys(hit).filter(k => !SearchResultPresenter.BoringKeys.has(k) && k !== titleKey && !this.isImageUrl(hit[k]))
-
-    const countFieldsToFind = idKey ? 3 : 4
-
-    const idKey = allKeys.find(k => SearchResultPresenter.IdKeys.includes(k))
+    const allKeys = Object.keys(hit).filter(k => !SearchResultPresenter.BoringKeys.has(k) && k !== titleKey && k !== idKey && !this.isImageUrl(hit[k]))
 
     const prioritised = SearchResultPresenter.PriorityKeys
       .filter(k => allKeys.includes(k))
       .concat(allKeys.filter(k => k !== idKey && !SearchResultPresenter.PriorityKeys.includes(k)))
-
-    let idAndPrioritised = prioritised
       .filter(k => {
         const v = hit[k]
         return v !== null && v !== undefined && String(v).trim() !== ""
       })
-      .slice(0, idKey ? 3 : 4)
 
-    if (idKey) {
-      idAndPrioritised = [ idKey, ...idAndPrioritised ]
-    }
-
-    return idAndPrioritised
+    return prioritised
+      .slice(0, 4)
   }
 
   determineRankingScore(hit: Hit): number | undefined {

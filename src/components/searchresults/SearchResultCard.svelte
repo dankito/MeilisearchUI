@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { BookOpen } from "@lucide/svelte"
+  import { BookOpen, KeyRound } from "@lucide/svelte"
   import type { Hit, Index } from "meilisearch"
   import { DI } from "../../ts/service/DI"
 
@@ -55,6 +55,16 @@
 
     <!-- Body fields -->
     <dl class="mt-2 space-y-1">
+      {#if fields.idKey}
+        <div class="flex items-center gap-1.5 text-xs leading-relaxed">
+          <KeyRound size={14} />
+          <dt class="shrink-0 font-medium text-zinc-400">{fields.idKey}</dt>
+          <dd class="min-w-0 text-zinc-600 truncate break-all">
+            {presenter.formatValue(hit[fields.idKey])}
+          </dd>
+        </div>
+      {/if}
+
       {#each fields.displayedFieldsKeys as key}
         {@const raw = hit[key]}
         {@const val = presenter.formatValue(raw)}
