@@ -2,6 +2,7 @@
   import { DI } from "../../ts/service/DI"
   import Card from "../common/form/Card.svelte"
   import MarkdownContent from "../common/controls/MarkdownContent.svelte"
+  import HtmlContent from "../common/controls/HtmlContent.svelte"
 
   let { value, clampHeight }: { value: any, clampHeight?: boolean } = $props()
 
@@ -51,11 +52,7 @@
 
 {:else if isHtml}
   <Card class="prose prose-sm prose-zinc max-w-none border border-zinc-200 p-3">
-    <!-- to avoid that html destroys our layout we have to use an iframe -->
-    <iframe srcdoc={value} sandbox="allow-scripts" title="HTML preview"
-            class="size-full overflow-y-auto" style="height: {clampHeight ? '120px' : `600px`}; overflow-y: auto;">
-
-    </iframe>
+    <HtmlContent html={value} maxHeight={clampHeight ? "120px" : undefined} />
   </Card>
 
 {:else if isMarkdown}
