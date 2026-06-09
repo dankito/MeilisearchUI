@@ -44,7 +44,7 @@
     <button onclick={() => { item.onClick(); onClose() }}
         class="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-100 transition-colors" >
       {#if item.icon}
-        <span class={item.icon}></span>
+        {@render item.icon()}
       {/if}
       {item.label}
     </button>

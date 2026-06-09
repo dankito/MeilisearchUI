@@ -21,8 +21,13 @@
 
 
   const menuItems = [
-    new MenuItem("Copy JSON", copyJsonToClipboard, "icon-[mdi--content-copy]"),
+    new MenuItem("Download JSON", downloadJson, downloadIcon),
+    new MenuItem("Copy JSON", copyJsonToClipboard, copyIcon),
   ]
+
+  async function downloadJson() {
+    await utils.makeDownloadable(getJson(), "application/json", `${title}.json`)
+  }
 
   async function copyJsonToClipboard() {
     await utils.copyToClipboard(getJson())
@@ -57,3 +62,12 @@
     </div>
   </Card>
 </div>
+
+
+{#snippet copyIcon()}
+  <span class="icon-[mdi--content-copy] size-4.5"></span>
+{/snippet}
+
+{#snippet downloadIcon()}
+  <span class="icon-[mdi--tray-download] size-4.5"></span>
+{/snippet}
