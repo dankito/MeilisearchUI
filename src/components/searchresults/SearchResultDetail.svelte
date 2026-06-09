@@ -5,16 +5,32 @@
   import Card from "../common/form/Card.svelte"
   import ClosableHeader from "../common/controls/ClosableHeader.svelte"
   import SearchResultDetailField from "./SearchResultDetailField.svelte"
+  import { MenuItem } from "../../ts/ui/MenuItem"
 
   let { hit, viewState }: { hit: Hit, viewState: ViewState } = $props()
 
   const presenter = DI.searchResultPresenter
+
+  const utils = DI.utils
 
   let title = $derived(presenter.getTitle(hit, presenter.findTitleKey(hit)))
 
   let imageUrl = $derived(presenter.findImageUrl(hit))
 
   let keys = $derived(Object.keys(hit))
+
+
+  const menuItems = [
+    new MenuItem("Copy JSON", copyJsonToClipboard, "icon-[mdi--content-copy]"),
+  ]
+
+  async function copyJsonToClipboard() {
+    await utils.copyToClipboard(getJson())
+  }
+
+  function getJson(): string {
+    return JSON.stringify(hit, null, 2)
+  }
 
 
   function closeDetailView() {
@@ -24,7 +40,7 @@
 
 <div class="w-full h-full min-h-0 flex flex-col gap-3 px-2 py-3">
   <Card class="flex-1 min-h-0 flex flex-col gap-3 px-3 py-3">
-    <ClosableHeader {title} onClose={closeDetailView} />
+    <ClosableHeader {title} {menuItems} onClose={closeDetailView} />
 
     <div class="flex-1 flex flex-col gap-3 overflow-y-auto">
       {#if imageUrl}
