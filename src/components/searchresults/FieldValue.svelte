@@ -51,9 +51,11 @@
 
 {:else if isHtml}
   <Card class="prose prose-sm prose-zinc max-w-none border border-zinc-200 p-3">
-    <div class="overflow-y-auto" class:max-h-30={clampHeight}>
-      {@html value}
-    </div>
+    <!-- to avoid that html destroys our layout we have to use an iframe -->
+    <iframe srcdoc={value} sandbox="allow-scripts" title="HTML preview"
+            class="size-full overflow-y-auto" style="height: {clampHeight ? '120px' : `600px`}; overflow-y: auto;">
+
+    </iframe>
   </Card>
 
 {:else if isMarkdown}
