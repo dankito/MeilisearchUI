@@ -1,4 +1,5 @@
-import type { Hit } from "meilisearch"
+import type { Hit, Index } from "meilisearch"
+import { HitFields } from "../HitFields"
 
 export class SearchResultPresenter {
 
@@ -45,18 +46,26 @@ export class SearchResultPresenter {
   ]
 
 
-  findTitleKey(hit: Hit): string | null {
-    return SearchResultPresenter.TitleKeys.find(k => k in hit && typeof hit[k] === "string") ?? null
+  determineHitFields(index: Index | undefined, hit: Hit): HitFields {
+    const titleKey = this.findTitleKey(hit)
+    const idKey = index?.primaryKey
+
+    return new HitFields(titleKey, this.getTitle(hit, titleKey), idKey, idKey ? this.getFieldValue(hit, idKey) : undefined,
+      this.findImageUrl(hit), this.determineRankingScore(hit), this.determineDisplayedFields(hit, titleKey, idKey))
   }
 
-  findImageUrl(hit: Hit): string | null {
+  findTitleKey(hit: Hit): string | undefined {
+    return SearchResultPresenter.TitleKeys.find(k => k in hit && typeof hit[k] === "string")
+  }
+
+  findImageUrl(hit: Hit): string | undefined {
     // Look for image in any value
     for (const val of Object.values(hit)) {
       if (this.isImageUrl(val)){
         return val as string
       }
 
-      if (typeof val === "object" && val !== null) {
+      if (typeof val === "object" && val !== undefined) {
         for (const nested of Object.values(val as object)) {
           if (this.isImageUrl(nested)) {
             return nested as string
@@ -64,7 +73,7 @@ export class SearchResultPresenter {
         }
       }
     }
-    return null
+    return undefined
   }
 
   isImageUrl(val: unknown): val is string {
@@ -75,9 +84,9 @@ export class SearchResultPresenter {
     return typeof val === "string" && SearchResultPresenter.HTTP_PATTERN.test(val.trim())
   }
 
-  getTitle(hit: Hit, titleKey: string | null): string {
+  getTitle(hit: Hit, titleKey: string | undefined): string {
     if (titleKey) {
-      return String(hit[titleKey])
+      return this.getFieldValue(hit, titleKey)
     }
 
     // Fallback: first short string value
@@ -90,8 +99,10 @@ export class SearchResultPresenter {
     return "Untitled"
   }
 
-  determineBodyFields(hit: Hit, titleKey: string | null): string[] {
+  determineDisplayedFields(hit: Hit, titleKey: string | undefined, idKey: string | undefined): string[] {
     const allKeys = Object.keys(hit).filter(k => !SearchResultPresenter.BoringKeys.has(k) && k !== titleKey && !this.isImageUrl(hit[k]))
+
+    const countFieldsToFind = idKey ? 3 : 4
 
     const idKey = allKeys.find(k => SearchResultPresenter.IdKeys.includes(k))
 
@@ -113,10 +124,10 @@ export class SearchResultPresenter {
     return idAndPrioritised
   }
 
-  determineRankingScore(hit: Hit): number | null {
-    const score = hit._rankingScore ?? hit._score ?? null
-    if (score === null) {
-      return null
+  determineRankingScore(hit: Hit): number | undefined {
+    const score = hit._rankingScore ?? hit._score ?? undefined
+    if (score === undefined) {
+      return undefined
     }
     return Math.round(Number(score) * 100)
   }

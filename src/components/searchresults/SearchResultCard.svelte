@@ -1,25 +1,14 @@
 <script lang="ts">
   import { BookOpen } from "@lucide/svelte"
-  import type { Hit } from "meilisearch"
+  import type { Hit, Index } from "meilisearch"
   import { DI } from "../../ts/service/DI"
 
-  let { hit, hasImageUrls = false }: { hit: Hit, hasImageUrls?: boolean } = $props()
+  let { hit, index, hasImageUrls = false }: { hit: Hit, index?: Index, hasImageUrls?: boolean } = $props()
 
   const presenter = DI.searchResultPresenter
 
 
-  // ── Derived state ─────────────────────────────────────────────────────────
-
-  let imageUrl = $derived(presenter.findImageUrl(hit))
-
-  const titleKey = $derived(presenter.findTitleKey(hit))
-
-  const title = $derived(presenter.getTitle(hit, titleKey))
-
-  /** Keys to display as body fields — ordered by priority, capped at 4 */
-  const bodyFields = $derived(presenter.determineBodyFields(hit, titleKey))
-
-  const rankingScore = $derived(presenter.determineRankingScore(hit))
+  const fields = $derived(presenter.determineHitFields(index, hit))
 
   let imgError = $state(false)
 </script>
@@ -29,10 +18,10 @@
          hover:shadow-xl hover:-translate-y-px">
   <!-- Image thumbnail -->
   {#if hasImageUrls}
-    {#if imageUrl && !imgError}
+    {#if fields.imageUrl && !imgError}
       <img
-          src={imageUrl}
-          alt={title}
+          src={fields.imageUrl}
+          alt={fields.title}
           onerror={() => (imgError = true)}
           class="size-20 rounded-lg object-cover ring-1 ring-zinc-100"
       />
@@ -52,21 +41,21 @@
     <!-- Title row -->
     <div class="flex items-start justify-between gap-2">
       <h3 class="text-sm font-semibold leading-snug text-zinc-900 line-clamp-2">
-        {title}
+        {fields.title}
       </h3>
-      {#if rankingScore !== null}
+      {#if fields.rankingScore !== undefined}
         <span
             class="ml-auto shrink-0 rounded-full bg-primary/10 px-2 py-0.5
                  text-[10px] font-semibold tracking-wide text-primary"
         >
-          {rankingScore}%
+          {fields.rankingScore}%
         </span>
       {/if}
     </div>
 
     <!-- Body fields -->
     <dl class="mt-2 space-y-1">
-      {#each bodyFields as key}
+      {#each fields.displayedFieldsKeys as key}
         {@const raw = hit[key]}
         {@const val = presenter.formatValue(raw)}
         {#if val}

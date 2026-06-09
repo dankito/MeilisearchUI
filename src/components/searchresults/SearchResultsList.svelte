@@ -193,15 +193,9 @@
     {:else if hits.length > 0}
       <ul class="w-full space-y-3">
         {#each hits as hit, i}
-          <li
-              class="cursor-pointer"
-              style="animation-delay: {i * 30}ms"
-              onclick={() => itemSelected(hit)}
-              onkeydown={e => e.key === "Enter" && itemSelected(hit)}
-              role="button"
-              tabindex="0"
-          >
-            <SearchResultCard {hit} {hasImageUrls} />
+          <li class="cursor-pointer" style="animation-delay: {i * 30}ms" role="button" tabindex="0"
+              onclick={() => itemSelected(hit)} onkeydown={e => e.key === "Enter" && itemSelected(hit)} >
+            <SearchResultCard {hit} {hasImageUrls} index={viewState.selectedIndex} />
           </li>
         {/each}
       </ul>
