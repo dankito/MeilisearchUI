@@ -100,18 +100,28 @@ export class SearchResultPresenter {
   }
 
   determineDisplayedFields(hit: Hit, titleKey: string | undefined, idKey: string | undefined): string[] {
+    const countFieldsToFind = idKey ? 3 : 4
+
+    const formatted = hit._formatted ?? {}
+    const matchedFieldKeys = Object.keys(formatted)
+      .filter(k => k !== titleKey && k !== idKey && this.formatValue(formatted[k]).includes(`<span class="match">`))
+    if (matchedFieldKeys.length >= countFieldsToFind) {
+      return matchedFieldKeys.slice(0, countFieldsToFind)
+    }
+
     const allKeys = Object.keys(hit).filter(k => !SearchResultPresenter.BoringKeys.has(k) && k !== titleKey && k !== idKey && !this.isImageUrl(hit[k]))
 
     const prioritised = SearchResultPresenter.PriorityKeys
-      .filter(k => allKeys.includes(k))
-      .concat(allKeys.filter(k => k !== idKey && !SearchResultPresenter.PriorityKeys.includes(k)))
+      .filter(k => allKeys.includes(k) && !matchedFieldKeys.includes(k))
+      .concat(allKeys.filter(k => !SearchResultPresenter.PriorityKeys.includes(k)))
       .filter(k => {
         const v = hit[k]
         return v !== null && v !== undefined && String(v).trim() !== ""
       })
 
-    return prioritised
-      .slice(0, 4)
+    return matchedFieldKeys
+      .concat(prioritised)
+      .slice(0, countFieldsToFind)
   }
 
   determineRankingScore(hit: Hit): number | undefined {
@@ -120,6 +130,18 @@ export class SearchResultPresenter {
       return undefined
     }
     return Math.round(Number(score) * 100)
+  }
+
+  getFieldValue(hit: Hit, key: string): string {
+    if (hit._formatted && key in hit._formatted) {
+      return hit._formatted[key]
+    }
+
+    const val = hit[key]
+    if (val === undefined) {
+      return ""
+    }
+    return this.formatValue(val)
   }
 
   formatValue(val: unknown): string {

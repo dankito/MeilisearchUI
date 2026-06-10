@@ -1,12 +1,13 @@
 import {
   type DocumentQuery, type EnqueuedTask,
   type Filter, type Index,
+  type Highlight,
   Meilisearch,
   type MultiSearchParams,
   type MultiSearchQuery,
   type MultiSearchResponse,
   type RecordAny,
-  type SearchResponse, type Task, type TaskStatus
+  type SearchResponse, type Task, type TaskStatus, type Crop
 } from "meilisearch"
 import { SearchState } from "../ui/state/SearchState.svelte"
 
@@ -21,7 +22,9 @@ export class MeiliService {
 
   async search(indexName: string, search: SearchState): Promise<SearchResponse> {
     const offset = search.page * search.pageSize
-    const searchQuery: MultiSearchQuery = { indexUid: indexName, q: search.query, limit: search.pageSize, offset: offset, matchingStrategy: search.matchingStrategy }
+    const highlight: Highlight = { attributesToHighlight: ["*"], highlightPreTag: `<span class="match">`, highlightPostTag: "</span>" }
+    const crop: Crop = { attributesToCrop: ["*"], cropLength: 12, cropMarker: "..." }
+    const searchQuery: MultiSearchQuery = { indexUid: indexName, q: query, limit: search.pageSize, offset: offset, matchingStrategy: search.matchingStrategy, ...highlight, ...crop }
     const params: MultiSearchParams = { queries: [ searchQuery ] }
     const response: MultiSearchResponse = await this.client.multiSearch(params)
 

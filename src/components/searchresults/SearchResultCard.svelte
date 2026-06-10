@@ -40,8 +40,8 @@
   <div class="min-w-0 flex-1">
     <!-- Title row -->
     <div class="flex items-start justify-between gap-2">
-      <h3 class="text-sm font-semibold leading-snug text-zinc-900 line-clamp-2">
-        {fields.title}
+      <h3 class="title text-sm font-semibold leading-snug text-zinc-800 line-clamp-2">
+        {@html fields.title}
       </h3>
       {#if fields.rankingScore !== undefined}
         <span
@@ -60,14 +60,14 @@
           <KeyRound size={14} />
           <dt class="shrink-0 font-medium text-zinc-400">{fields.idKey}</dt>
           <dd class="min-w-0 text-zinc-600 truncate break-all">
-            {presenter.formatValue(hit[fields.idKey])}
+            {presenter.getFieldValue(hit, fields.idKey)}
           </dd>
         </div>
       {/if}
 
       {#each fields.displayedFieldsKeys as key}
         {@const raw = hit[key]}
-        {@const val = presenter.formatValue(raw)}
+        {@const val = presenter.getFieldValue(hit, key)}
         {#if val}
           <div class="flex gap-1.5 text-xs leading-relaxed">
             <dt class="shrink-0 font-medium text-zinc-400">{key}</dt>
@@ -78,7 +78,7 @@
                   {raw}
                 </a>
               {:else}
-                {val}
+                {@html val}
               {/if}
             </dd>
           </div>
