@@ -65,7 +65,7 @@ export class SearchResultPresenter {
         return val as string
       }
 
-      if (typeof val === "object" && val !== undefined) {
+      if (typeof val === "object" && val !== undefined && val !== null) {
         for (const nested of Object.values(val as object)) {
           if (this.isImageUrl(nested)) {
             return nested as string
