@@ -34,7 +34,7 @@
 
 
 <div class="shrink-0 w-full h-16 sticky top-0 z-50 shadow-lg bg-white px-1.5 md:px-4 py-1.5 md:py-2 flex flex-row items-center justify-between overflow-hidden">
-  <div class="shrink-0 flex flex-col md:flex-row items-center gap-1 md:gap-2">
+  <div class="shrink-0 md:w-19 flex flex-col md:flex-row items-center gap-1 md:gap-2">
     <div class="rounded-full size-5" class:bg-green-600={viewState.isHealthy} class:bg-red-600={!!!viewState.isHealthy}></div>
 
     <div class="max-sm:text-[10px]">
@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <div class="min-w-0 flex flex-row items-center gap-2 md:gap-4">
+  <div class="min-w-0 lg:w-240 flex flex-row items-center gap-2 md:gap-4">
     <ComboBox class="shrink-0 h-10 max-sm:max-w-25" options={indexOptions} selectedOption={viewState.selectedIndex}
               selectionChanged={index => viewState.selectedIndex = index} />
 
@@ -51,7 +51,7 @@
     <ComboBox class="shrink-0 h-10 max-sm:w-[65px] sm:min-w-[65px] sm:max-w-[93px]" options={matchingStrategiesOptions} bind:selectedOption={viewState.search.matchingStrategy} />
   </div>
 
-  <div class="shrink-0">
+  <div class="shrink-0 md:w-19 flex justify-end">
     <button onclick={() => viewState.showIndexSettingsDialog = true} aria-label="Show Index Settings Dialog"
             class="flex items-center justify-center size-9 rounded-full hover:bg-zinc-100 transition-colors text-zinc-600 hover:text-zinc-900">
       <Settings size={20} />
