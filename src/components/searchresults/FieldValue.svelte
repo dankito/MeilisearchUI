@@ -52,7 +52,7 @@
 
 {:else if isHtml}
   <Card class="prose prose-sm prose-zinc max-w-none border border-zinc-200 p-3">
-    <HtmlContent html={value} maxHeight={clampHeight ? "120px" : undefined} />
+    <HtmlContent html={value} maxHeight={clampHeight ? 120: undefined} />
   </Card>
 
 {:else if isMarkdown}
