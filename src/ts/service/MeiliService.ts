@@ -21,14 +21,37 @@ export class MeiliService {
 
 
   async search(indexName: string, search: SearchState): Promise<SearchResponse> {
+    let query: string | undefined = search.query
+    let filter: Filter | undefined = undefined
+    // TODO: should we implement a convenience function and uppercase lowercase 'and', 'is', ...?
+    // but then also do a case insensitive check in isFilterExpression()
+    if (this.isFilterExpression(query)) {
+      filter = query
+      query = undefined
+    }
+
     const offset = search.page * search.pageSize
     const highlight: Highlight = { attributesToHighlight: ["*"], highlightPreTag: `<span class="match">`, highlightPostTag: "</span>" }
     const crop: Crop = { attributesToCrop: ["*"], cropLength: 12, cropMarker: "..." }
-    const searchQuery: MultiSearchQuery = { indexUid: indexName, q: query, limit: search.pageSize, offset: offset, matchingStrategy: search.matchingStrategy, ...highlight, ...crop }
+    const searchQuery: MultiSearchQuery = { indexUid: indexName, q: query, filter: filter, limit: search.pageSize, offset: offset, matchingStrategy: search.matchingStrategy, ...highlight, ...crop }
     const params: MultiSearchParams = { queries: [ searchQuery ] }
     const response: MultiSearchResponse = await this.client.multiSearch(params)
 
     return response.results[0]
+  }
+
+  /**
+   *
+   * filter.equality:   Enables equality operators: =, !=, IN, NOT IN, IS NULL, IS NOT NULL, IS EMPTY, IS NOT EMPTY, EXISTS, NOT EXISTS.
+   * filter.comparison: Enables comparison operators: >, >=, <, <=, TO
+   * facetSearch:       Enables facet search on the attribute. Used with the /facet-search endpoint and facet distribution.
+   * @param query
+   * @private
+   */
+  private isFilterExpression(query: string): boolean {
+    return query.includes("=") || query.includes(" IN ") || query.includes(" IS ") || query.includes(" EXISTS ")
+      // filter.comparison
+      || query.includes(">") || query.includes("<") || query.includes(" TO ")
   }
 
   async getDocument(indexName: string, documentId: string): Promise<RecordAny> {
