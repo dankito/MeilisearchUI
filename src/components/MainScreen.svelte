@@ -33,7 +33,7 @@
 
     setInterval(async () => {
       viewState.isHealthy = await meili.client.isHealthy()
-    }, 10_000)
+    }, 30 * 1_000)
 
     setInterval(async () => {
       viewState.stats = await meili.client.getStats()
