@@ -201,9 +201,9 @@
       </ul>
 
       <!-- Pagination hint -->
-      {#if response && response.totalPages && response.totalPages > 1}
+      {#if hasMoreItems}
         <p class="mt-4 text-center text-xs text-zinc-400">
-          Page {response.page ?? 1} of {response.totalPages}
+          Page {search.page + 1} of {response?.totalPages ?? (response?.totalHits ?? response?.estimatedTotalHits ?? hits.length) / search.pageSize}
         </p>
       {/if}
 
